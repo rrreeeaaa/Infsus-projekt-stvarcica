@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stvarčica</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            background-image: url('https://img.freepik.com/free-vector/warehouse-shelves-with-cardboard-wooden-boxes-vector-cartoon-illustration-factory-delivery-company-supermarket-storehouse-interior-packages-with-goods-large-room-with-lamps-ceiling_107791-23124.jpg?semt=ais_hybrid&w=740');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.4); /* bijeli sloj s prozirnošću */
+    z-index: -1;
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <h1 style="font-size: 50px; font-family: 'Comic Sans MS', cursive;">
+  STVARČICA
+</h1>
+
+
+    <div class="tabs">
+        <button class="tab-button" onclick="showTab('popis')">📋 Popis proizvoda</button>
+        <button class="tab-button" onclick="showTab('dodavanje')">➕ Dodavanje proizvoda</button>
+        <button class="tab-button" onclick="showTab('graf')">📊 Graf kategorija</button>
+    </div>
+
+    <div id="popis" class="tab-content">
+        <h2>Popis proizvoda</h2>
+        <table>
+            <tr>
+                <th>Naziv</th>
+                <th>Cijena</th>
+                <th>Količina</th>
+                <th>Kategorija</th>
+                <th>Dodano</th>
+                <th>Ažurirano</th>
+                <th>Akcija</th>
+            </tr>
+            {% for p in proizvodi %}
+            <tr>
+                <td>{{ p.naziv }}</td>
+                <td>{{ p.cijena }} €</td>
+                <td>{{ p.kolicina }}</td>
+                <td>{{ p.kategorija }}</td>
+                <td>{{ p.datum_dodavanja.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>{{ p.datum_azuriranja.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>
+                    <a href="/uredi/{{ p.id }}">Uredi</a> |
+                    <a href="/obrisi/{{ p.id }}">Obriši</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div id="dodavanje" class="tab-content" style="display:none">
+        <h2>Dodaj novi proizvod</h2>
+        <form method="post" action="/dodaj">
+            <label>Naziv: <input type="text" name="naziv" required></label><br>
+            <label>Cijena: <input type="number" name="cijena" step="0.01" required></label><br>
+            <label>Količina: <input type="number" name="kolicina" required></label><br>
+            <label>Kategorija: <input type="text" name="kategorija" required></label><br>
+            <input type="submit" value="Dodaj">
+        </form>
+    </div>
+
+    <div id="graf" class="tab-content" style="display:none">
+    <h2>Broj proizvoda po kategoriji</h2>
+
+    <div style="max-width: 900px; margin: 0 auto;">
+        <canvas id="categoryChart" style="background-color: white;"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        const chartData = {
+            labels: [{% for k in kategorije %}"{{ k }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Broj proizvoda',
+                data: [{% for br in brojevi %}{{ br }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: 'rgba(54, 162, 235, 0.8)'
+            }]
+        };
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: true
+            }
+        });
+    </script>
+</div>
+
+    <script>
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.style.display = 'none');
+            document.getElementById(tabId).style.display = 'block';
+        }
+    </script>
+</body>
+</html>

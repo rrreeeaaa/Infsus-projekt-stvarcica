@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Uredi proizvod</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Uredi proizvod: {{ proizvod.naziv }}</h1>
+    <form method="post">
+        <label>Naziv: <input type="text" name="naziv" value="{{ proizvod.naziv }}" required></label><br>
+        <label>Cijena: <input type="number" name="cijena" step="0.01" value="{{ proizvod.cijena }}" required></label><br>
+        <label>Količina: <input type="number" name="kolicina" value="{{ proizvod.kolicina }}" required></label><br>
+        <label>Kategorija: <input type="text" name="kategorija" value="{{ proizvod.kategorija }}" required></label><br>
+        <input type="submit" value="Spremi promjene">
+    </form>
+    <br>
+    <a href="/">← Povratak na popis</a>
+</body>
+</html>
